@@ -1,12 +1,37 @@
+server:
+  port: 8805
+
 spring:
   application:
     name: catalog-service
-  config:
-    import: configserver:http://localhost:8888
 
-    eureka:
-      client:
-        service-url:
-          defaultZone: http://localhost:8761/eureka/
-      instance:
-        hostname: localhost
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: sa
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+message: hello from catalog-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+eureka:
+  client:
+    server-url:
+      defaultZone: http://localhost:8176/eureka/
