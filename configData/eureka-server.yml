@@ -1,5 +1,13 @@
+server:
+  port: 8761
 spring:
   application:
-    name: movie-service
-  config:
-    import: configserver:http://localhost:8888
+    name: eureka-server
+eureka:
+  instance:
+    hostname: localhost
+    preferIpAdress: true
+
+  client:
+    registerwithEureka: false
+    fetchRegistry: false
