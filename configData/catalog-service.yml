@@ -6,31 +6,36 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password: sa
-  jpa:
-    open-in-view: false
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: catalogs_database
 
 message: hello from catalog-service
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
 
-movie-service:
-  url: http://localhost:8023/movies/%s
+resilience4j:
+  circuitbreaker:
+    instances:
+      catalog:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000
+        permitted-number-of-calls-in-half-open-state: 3
+        register-health-indicator: true
+        allow-health-indicator-to-fail: false
+        automatic-transition-from-open-to-half-open-enabled: true
+  retry:
+    instances:
+      catalog:
+        wait-duration: 1000
+        retry-exceptions:
+          - feign.FeignException$InternalServerError
+        max-attempts: 3
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
